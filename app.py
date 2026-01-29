@@ -245,7 +245,7 @@ def run_streamlit_app() -> None:
     import matplotlib.pyplot as plt
 
     st.set_page_config(page_title="ML Assignment 2 - Classifiers", layout="wide")
-    st.title("Machine Learning Assignment 2 — 6 Classifiers Demo")
+    st.title("Machine Learning Assignment 2 — 6 Classifiers Demo for Breast Cancer Dataset")
 
     X_default, y_default = load_default_dataset()
     default_cols = list(X_default.columns)
