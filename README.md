@@ -1,4 +1,4 @@
-# ML Assignment 2 — 6 Classifiers Demo (Streamlit)
+# Machine Learning Assignment 2 — 6 Classifiers Demo for Breast Cancer Dataset
 
 This project trains and compares **6 classification models** and provides a **Streamlit web app** to upload CSV test data, select a model, and view evaluation outputs (**Accuracy, AUC, Precision, Recall, F1, MCC + Confusion Matrix + Classification Report**).
 
