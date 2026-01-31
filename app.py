@@ -174,12 +174,25 @@ def train_and_save_all(save_test_csv: bool = True) -> pd.DataFrame:
     log("STEP 2/6: Validating dataset constraints (>=500 rows, >=12 features)...")
     validate_dataset(X, y, min_rows=500, min_features=12)  # training must satisfy assignment
     log("Validation OK.")
+    log("Saving full dataset CSV (reports/full_data.csv)...")
+    full_df = X.copy()
+    full_df["target"] = y.values
+    full_path = REPORT_DIR / "full_data.csv"
+    full_df.to_csv(full_path, index=False)
+    log(f"Saved full dataset CSV: {full_path.resolve()}")
 
     log("STEP 3/6: Train-test split (80/20, stratified)...")
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=RANDOM_STATE, stratify=y
     )
     log(f"Split done: Train={X_train.shape}, Test={X_test.shape}")
+
+    log("Saving train dataset CSV (reports/train_data.csv)...")
+    train_df = X_train.copy()
+    train_df["target"] = y_train.values
+    train_path = REPORT_DIR / "train_data.csv"
+    train_df.to_csv(train_path, index=False)
+    log(f"Saved train dataset CSV: {train_path.resolve()}")
 
     if save_test_csv:
         log("Saving test CSV for Streamlit upload...")
@@ -380,6 +393,8 @@ def main():
         print("\nSaved:")
         print(f"- Models: {MODEL_DIR.resolve()}")
         print(f"- Metrics CSV: {(REPORT_DIR / 'metrics.csv').resolve()}")
+        print(f"- Full data CSV: {(REPORT_DIR / 'full_data.csv').resolve()}")
+        print(f"- Train data CSV: {(REPORT_DIR / 'train_data.csv').resolve()}")
         print(f"- Test CSV for upload: {(REPORT_DIR / 'test_data_for_upload.csv').resolve()}")
         return
 

@@ -1,84 +1,122 @@
-# Machine Learning Assignment 2 — 6 Classifiers Demo for Breast Cancer Dataset
+# Machine Learning Assignment 2 — 6 Classifiers + Streamlit App (Breast Cancer)
 
-This project trains and compares **6 classification models** and provides a **Streamlit web app** to upload CSV test data, select a model, and view evaluation outputs (**Accuracy, AUC, Precision, Recall, F1, MCC + Confusion Matrix + Classification Report**).
+**Author:** Biswarup Nandi  
+**Student ID:** 2025AA05115  
+**Email:** 2025aa05115@wilp.bits-pilani.ac.in  
 
 ---
 
-## Dataset
+## 1) Problem statement
 
-**Default dataset:** Breast Cancer Wisconsin (Diagnostic) dataset (binary classification) from `scikit-learn`.
+Build and compare **six classification models** to predict whether a breast tumor is **malignant or benign**, and provide a simple **Streamlit UI** where a user can upload a CSV and view predictions + evaluation metrics.
 
+---
+
+## 2) Dataset description
+
+- **Dataset:** Breast Cancer Wisconsin (Diagnostic)  
+- **Source:** UCI dataset (loaded via `sklearn.datasets.load_breast_cancer`)  
 - **Rows:** 569  
 - **Features:** 30 numeric features  
-- **Target column name:** `target` (0/1)
-
-The script also creates a ready-to-upload test CSV:
-
-- `reports/test_data_for_upload.csv` (the 20% test split + `target`)
+- **Target column:** `target`  
+  - `0` = malignant  
+  - `1` = benign  
 
 ---
 
-## Models Implemented (6)
+## 3) Models implemented
 
-1. Logistic Regression  
-2. Decision Tree  
-3. k-Nearest Neighbors (kNN)  
-4. Naive Bayes (GaussianNB)  
-5. Random Forest  
-6. XGBoost  
-
----
-
-## Train/Test Split
-
-- **Train:** 80%  
-- **Test:** 20%  
-- **Stratified:** Yes  
-- **Random seed:** 42  
+1. Logistic Regression *(with StandardScaler via Pipeline)*
+2. Decision Tree
+3. k-Nearest Neighbors (kNN) *(with StandardScaler via Pipeline)*
+4. Naive Bayes (GaussianNB)
+5. Random Forest
+6. XGBoost
 
 ---
 
-## How to Run
+## 4) Metrics reported
 
-### 1) Install dependencies
+For each model, the app computes and displays:
+
+- **Accuracy**
+- **AUC (ROC-AUC)**
+- **Precision**
+- **Recall**
+- **F1-score**
+- **MCC (Matthews Correlation Coefficient)**
+- **Confusion Matrix**
+- **Classification Report**
+
+---
+
+## 5) Train/Test split
+
+- **Train:** 80%
+- **Test:** 20%
+- **Stratified split:** Yes
+- **Random state:** 42
+
+---
+
+## 6) What gets saved (generated during training)
+
+When you run training (`python app.py --train`) or click **Train & save all models (quick)** in Streamlit, these files are created/updated:
+
+### Models
+- `model/logistic_regression.joblib`
+- `model/decision_tree.joblib`
+- `model/knn.joblib`
+- `model/naive_bayes.joblib`
+- `model/random_forest.joblib`
+- `model/xgboost.joblib`
+
+### Reports
+- `reports/metrics.csv` → comparison table for all 6 models
+- `reports/test_data_for_upload.csv` → the 20% test split **with** `target` (recommended for upload)
+- `reports/train_data.csv` → the 80% train split **with** `target`
+- `reports/full_data.csv` → full dataset **with** `target`
+
+---
+
+## 7) How to run
+
+### A) Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2) Train + save all models + generate reports
+### B) Train + save models + generate reports
 ```bash
 python app.py --train
 ```
 
-This generates:
-- `model/*.joblib` (6 saved trained models)
-- `reports/metrics.csv` (comparison table)
-- `reports/test_data_for_upload.csv` (upload-ready test dataset)
-
-### 3) Run the Streamlit app
+### C) Run the Streamlit app
 ```bash
 streamlit run app.py
 ```
 
 ---
 
-## Streamlit App Usage
+## 8) Streamlit usage
 
-1. Upload: `reports/test_data_for_upload.csv`
-2. Select target column: `target`
-3. Choose a model from dropdown
+1. (Recommended) Upload `reports/test_data_for_upload.csv`
+2. Select target column as `target`
+3. Pick a model from the dropdown
 4. Click **Run evaluation**
 
-Outputs shown in the UI:
-- Metrics: Accuracy, AUC, Precision, Recall, F1, MCC
-- Confusion Matrix
-- Classification Report
+### Notes
+- If you upload a CSV **without** a target column, the app will show:
+  - `prediction`
+  - `prob_positive`
+  (Metrics require a target column.)
+- If the app shows **“Saved model not found”**, train once using:
+  - `python app.py --train`
+  - or the sidebar training button
 
 ---
 
-## Results (From This Run)
-
-The comparison table below is generated from `reports/metrics.csv`:
+## 9) Results (from `reports/metrics.csv`)
 
 | ML Model Name | Accuracy | AUC | Precision | Recall | F1 | MCC |
 |---|---|---|---|---|---|---|
@@ -91,17 +129,20 @@ The comparison table below is generated from `reports/metrics.csv`:
 
 ---
 
-## Key Observations
+## 10) Model-wise observations (based on the above run)
 
-- **Best model by AUC:** **Logistic Regression** (AUC=0.9954, Accuracy=0.9825)
-- **Logistic Regression** performed extremely well on this dataset and achieved the highest AUC in this run.
-- **XGBoost** and **Random Forest** also achieved strong AUC values, consistent with ensemble-based classifiers.
-- **kNN** performed well after standard scaling (used via pipeline).
-- **Decision Tree** gave the weakest AUC among the six models in this run, likely due to overfitting/variance.
+| Model | Observation |
+|---|---|
+| Logistic Regression | Best overall AUC and accuracy; scaling helps a lot for stable performance. |
+| kNN | Very strong recall (1.0) after scaling; slightly lower precision than LR. |
+| Random Forest | Strong and consistent; good AUC with less tuning effort. |
+| XGBoost | Competitive AUC; performs well but depends on hyperparameter choices. |
+| Naive Bayes | Fast baseline; decent performance despite independence assumptions. |
+| Decision Tree | Lowest AUC in this run; tends to overfit without pruning/tuning. |
 
 ---
 
-## Project Structure
+## 11) Project structure
 
 ```
 ass-2/
@@ -118,13 +159,10 @@ ass-2/
 │   ├─ xgboost.joblib
 │
 └─ reports/
+    ├─ full_data.csv
+    ├─ train_data.csv
     ├─ metrics.csv
     ├─ test_data_for_upload.csv
 ```
 
 ---
-
-## Notes
-
-- If the Streamlit app shows "Saved model not found", run `python app.py --train` first and start Streamlit from the same project folder.
-- Uploaded CSV must contain the same feature columns as the trained dataset; extra columns are ignored and missing columns will raise an error.
